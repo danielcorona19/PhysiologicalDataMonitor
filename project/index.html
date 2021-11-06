@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <title>Physiological Signal Monitor</title>
+        <link rel="stylesheet" type="text/css" href="style.css">
+    </head>
+    <body>
+        <center>
+        <h1>Physiological Signal Monitor</h1>
+        </center>
+        <hr>
+        <div id="AucultationReading">
+            <form action="read_auscultation.php" method="post">
+                <button formaction="read.php" formmethod="post">
+                    Read Posterior Auscultation
+                </button>
+            </form>
+        </div>
+        <div id="TemperatureDisplay">
+            <h2>Temperature</h2>
+            <p style="font-size:50px" style="color:white;"><span id="temperature"></span></p>
+            <script type="text/javascript">
+                function queryDB(tx) {
+                    tx.executeSql('SELECT * FROM Patient', [], querySuccess);
+                }
+
+                function querySuccess(tx, results) {
+                    console.log("Returned rows = " + results.rows.length);
+                    console.log(results.rows[0].temperature);
+                    let temperature = results.rows[0].temperature;
+                    document.getElementById("temperature").innerHTML = temperature;
+                }
+
+                var db = openDatabase("PhysiologicalSignalMonitor.db", "1.0", "Mybase", 4048);
+                db.transaction(function(createDatabase){
+                    createDatabase.executeSql("DROP TABLE IF EXISTS Patient");
+                    createDatabase.executeSql("CREATE TABLE Patient (identification TEXT PRIMARY KEY, temperature REAL, moisture REAL)");
+                    createDatabase.executeSql("INSERT INTO Patient (identification,temperature,moisture) VALUES(001, 38, 27)");
+                })
+
+                db.transaction(queryDB);
+            </script>
+
+        </div>
+        <div id = "MoistureDisplay">
+
+        </div>
+        <div id = "PressureMapDisplay">
+            
+        </div>
+    </body>
+</html>
