@@ -1,53 +1,41 @@
 <!DOCTYPE html>
 
-<html>
+<html lang="pt">
     <head>
         <title>Physiological Signal Monitor</title>
         <link rel="stylesheet" type="text/css" href="style.css">
     </head>
     <body>
+        <link rel="stylesheet" type="text/css" href="nonio_alunos.css">
         <center>
         <h1>Physiological Signal Monitor</h1>
         </center>
-        <hr>
-        <div id="AucultationReading">
-            <form action="read_auscultation.php" method="post">
-                <button formaction="read.php" formmethod="post">
-                    Read Posterior Auscultation
-                </button>
-            </form>
+        <div class="square">
+            <div id="AuscultationReading">
+                <h4>Auscultation Reading</h4>
+                <form action="read_auscultation.php" method="post">
+                    <button formaction="read.php" formmethod="post">
+                        Read Posterior Auscultation
+                    </button>
+                </form>
+            </div>
         </div>
-        <div id="TemperatureDisplay">
-            <h2>Temperature</h2>
-            <p style="font-size:50px" style="color:white;"><span id="temperature"></span></p>
-            <script type="text/javascript">
-                function queryDB(tx) {
-                    tx.executeSql('SELECT * FROM Patient', [], querySuccess);
-                }
-
-                function querySuccess(tx, results) {
-                    console.log("Returned rows = " + results.rows.length);
-                    console.log(results.rows[0].temperature);
-                    let temperature = results.rows[0].temperature;
-                    document.getElementById("temperature").innerHTML = temperature;
-                }
-
-                var db = openDatabase("PhysiologicalSignalMonitor.db", "1.0", "Mybase", 4048);
-                db.transaction(function(createDatabase){
-                    createDatabase.executeSql("DROP TABLE IF EXISTS Patient");
-                    createDatabase.executeSql("CREATE TABLE Patient (identification TEXT PRIMARY KEY, temperature REAL, moisture REAL)");
-                    createDatabase.executeSql("INSERT INTO Patient (identification,temperature,moisture) VALUES(001, 38, 27)");
-                })
-
-                db.transaction(queryDB);
-            </script>
-
+        <div class="square">
+            <div id="TemperatureDisplay">
+                <h4>Temperature Display</h4>
+            </div>
         </div>
-        <div id = "MoistureDisplay">
-
+        <div class="square">
+            <div id = "MoistureDisplay">
+                <h4>Moisture Display</h4>
+                <img src="imagem.jpg" width="250px">
+            </div>
         </div>
-        <div id = "PressureMapDisplay">
-            
+        <div class="square">
+            <div id = "PressureMapDisplay">
+                <h4>Pressure Map Display</h4>
+            </div>
         </div>
     </body>
 </html>
+

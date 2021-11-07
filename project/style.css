@@ -1,7 +1,39 @@
-body{
+html,
+body {
     background-color: rgb(50, 50, 50);
+    height: 100%;
+    padding: 5px 2%;
 }
 
-h1{
+h1 {
     color:darkturquoise;
+    border: double;
+    border-color: white;
+    padding: 10px 2%;
+}
+
+.square {
+    width: 48%;
+    height: 48%;
+    float: left;
+    text-align: center;
+    margin: 0.2%;
+    border-radius: 1%;
+    background: #DDD;
+    font-style: normal;
+    font-family: "Times New Roman", Times, serif;
+    font-size: 20px;
+    border: double;
+}
+
+#AuscultationReading {
+}
+
+#TemperatureDisplay {
+}
+
+#MoistureDisplay {
+}
+
+#PressureMapDisplay {
 }
