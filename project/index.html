@@ -23,12 +23,13 @@
         <div class="square">
             <div id="TemperatureDisplay">
                 <h4>Temperature Display</h4>
+                <p style="font-size:50px"><span id="temperature"></span></p>
             </div>
         </div>
         <div class="square">
             <div id = "MoistureDisplay">
                 <h4>Moisture Display</h4>
-                <img src="imagem.jpg" width="250px">
+                <p style="font-size:50px"><span id="moisture"></span></p>
             </div>
         </div>
         <div class="square">
@@ -36,6 +37,37 @@
                 <h4>Pressure Map Display</h4>
             </div>
         </div>
+
+        <script type="text/javascript">
+            function queryDB(tx) {
+                tx.executeSql('SELECT * FROM Patient', [], querySuccess);
+            }
+
+            function querySuccess(tx, results) {
+                let temperature = results.rows[0].temperature;
+                let moisture = results.rows[0].moisture;
+                document.getElementById("temperature").innerHTML = temperature;
+                document.getElementById("moisture").innerHTML = moisture;
+            }
+
+            var db = openDatabase("PhysiologicalSignalMonitor.db", "1.0", "Mybase", 4048);
+            db.transaction(function(createDatabase){
+                createDatabase.executeSql("DROP TABLE IF EXISTS Patient");
+                createDatabase.executeSql("DROP TABLE IF EXISTS PressureMapping");
+                createDatabase.executeSql("DROP TABLE IF EXISTS PosteriorAuscultation");
+
+                createDatabase.executeSql("CREATE TABLE Patient (identification TEXT PRIMARY KEY, temperature REAL, moisture REAL)");
+                createDatabase.executeSql("CREATE TABLE PressureMapping (patient TEXT REFERENCES Patient,x INTEGER,y INTEGER,value REAL,PRIMARY KEY(patient,x,y))");
+                createDatabase.executeSql("CREATE TABLE PosteriorAuscultation (patient TEXT REFERENCES Patient,audio BLOB,date TEXT)");
+
+                createDatabase.executeSql("INSERT INTO Patient (identification,temperature,moisture) VALUES(001, 38, 27)");
+                createDatabase.executeSql("INSERT INTO PressureMapping(patient,x,y,value) VALUES(001,1,1,1.2)");
+                createDatabase.executeSql("INSERT INTO PressureMapping(patient,x,y,value) VALUES(001,1,2,1.2)");
+            })
+
+            db.transaction(queryDB);
+        </script>
+
     </body>
 </html>
 
