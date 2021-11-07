@@ -3,71 +3,170 @@
 <html lang="pt">
     <head>
         <title>Physiological Signal Monitor</title>
-        <link rel="stylesheet" type="text/css" href="style.css">
     </head>
+    
     <body>
-        <link rel="stylesheet" type="text/css" href="nonio_alunos.css">
-        <center>
-        <h1>Physiological Signal Monitor</h1>
-        </center>
-        <div class="square">
-            <div id="AuscultationReading">
-                <h4>Auscultation Reading</h4>
-                <form action="read_auscultation.php" method="post">
-                    <button formaction="read.php" formmethod="post">
-                        Read Posterior Auscultation
-                    </button>
-                </form>
+        <link rel="stylesheet" type="text/css" href="style.css">
+        <header><img src="logo3.png" style="max-width:20%;max-height:20%;border: 0px;"></header>
+
+        <main>
+
+            <center>
+            <h1>Physiological Signal Monitor</h1>
+            </center>
+                
+            <div class="row">
+                <div class="column1">
+                    <section id="TemperatureDisplay">
+                        <header><h4>Temperature Display</h4></header>
+                        <article>
+                            <p style="font-size: 20px;"><span id="temperature"></span>ºC</p>
+                            <img src="plot_temp.png" style="max-width:60%;max-height:60%;">
+                        </article>
+                    </section>
+                </div>
+
+                <div class="column1">
+                    <section id = "MoistureDisplay">
+                        <header><h4>Moisture Display</h4></header>
+                        <article>
+                            <p style="font-size:20px"><span id="moisture"></span>%</p>
+                            <img src="plot_moist.png" style="max-width:60%;max-height:60%;">
+                        </article>
+                    </section>
+                </div>
             </div>
-        </div>
-        <div class="square">
-            <div id="TemperatureDisplay">
-                <h4>Temperature Display</h4>
-                <p style="font-size:50px"><span id="temperature"></span></p>
+
+
+            <div class="row">
+                <div class="column2">
+                    <section id="Auscultation">
+                        <header><h4>Auscultation Reading</h4></header>
+                        <article>
+                            <form id="AuscultationReading">
+                                <button id = "read" onclick = "readAudio()">
+                                    <b>Read Posterior Auscultation</b>
+                                </button>
+                            </form>
+                        </article>
+                    </section>
+                </div>
+
+                <div class="column2">
+                    <section id = "PressureMapDisplay">
+                        <header><h4>Pressure Map Display</h4></header>
+                        <article>
+                            <img src="pressure.jpeg" style="max-width:90%;max-height:90%;">
+                            <table>
+                                <thead>
+                                    <tr>
+                                    <th>Body region</th><th>X Position</th><th>Y Position</th><th>Pressure (atm)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                    <td>Shoulder</td><td><span id="x1"></span></td><td><span id="y1"></span></td><td><span id="p1"></span></td>
+                                    </tr>
+                                    <tr>
+                                    <td>Shoulder</td><td><span id="x2"></span></td><td><span id="y2"></span></td><td><span id="p2"></span></td>
+                                    </tr>
+                                    <tr>
+                                    <td>Gluteus</td><td><span id="x3"></span></td><td><span id="y3"></span></td><td><span id="p3"></span></td>
+                                    </tr>
+                                    <tr>
+                                    <td>Gluteus</td><td><span id="x4"></span></td><td><span id="y4"></span></td><td><span id="p4"></span></td>
+                                    </tr>
+                                    <tr>
+                                    <td>Elbow</td><td><span id="x5"></span></td><td><span id="y5"></span></td><td><span id="p5"></span></td>
+                                    </tr>
+                                    <tr>
+                                    <td>Elbow</td><td><span id="x6"></span></td><td><span id="y6"></span></td><td><span id="p6"></span></td>
+                                    </tr>
+                                    <tr>
+                                    <td>Heel</td><td><span id="x7"></span></td><td><span id="y7"></span></td><td><span id="p7"></span></td>
+                                    </tr>
+                                    <tr>
+                                    <td>Heel</td><td><span id="x8"></span></td><td><span id="y8"></span></td><td><span id="p8"></span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </article>
+                    </section>
+                </div>
             </div>
-        </div>
-        <div class="square">
-            <div id = "MoistureDisplay">
-                <h4>Moisture Display</h4>
-                <p style="font-size:50px"><span id="moisture"></span></p>
-            </div>
-        </div>
-        <div class="square">
-            <div id = "PressureMapDisplay">
-                <h4>Pressure Map Display</h4>
-            </div>
-        </div>
+           
 
-        <script type="text/javascript">
-            function queryDB(tx) {
-                tx.executeSql('SELECT * FROM Patient', [], querySuccess);
-            }
 
-            function querySuccess(tx, results) {
-                let temperature = results.rows[0].temperature;
-                let moisture = results.rows[0].moisture;
-                document.getElementById("temperature").innerHTML = temperature;
-                document.getElementById("moisture").innerHTML = moisture;
-            }
+            <script type="text/javascript">
+                function queryDB(tx) {
+                    tx.executeSql('SELECT * FROM Patient', [], querySuccess);
+                }
 
-            var db = openDatabase("PhysiologicalSignalMonitor.db", "1.0", "Mybase", 4048);
-            db.transaction(function(createDatabase){
-                createDatabase.executeSql("DROP TABLE IF EXISTS Patient");
-                createDatabase.executeSql("DROP TABLE IF EXISTS PressureMapping");
-                createDatabase.executeSql("DROP TABLE IF EXISTS PosteriorAuscultation");
+                function queryDB2(tx2) {
+                    tx2.executeSql('SELECT * FROM PressureMapping', [], querySuccess2);
+                }
 
-                createDatabase.executeSql("CREATE TABLE Patient (identification TEXT PRIMARY KEY, temperature REAL, moisture REAL)");
-                createDatabase.executeSql("CREATE TABLE PressureMapping (patient TEXT REFERENCES Patient,x INTEGER,y INTEGER,value REAL,PRIMARY KEY(patient,x,y))");
-                createDatabase.executeSql("CREATE TABLE PosteriorAuscultation (patient TEXT REFERENCES Patient,audio BLOB,date TEXT)");
+                function querySuccess(tx, results) {
+                    let temperature = results.rows[0].temperature;
+                    let moisture = results.rows[0].moisture;
+                    document.getElementById("temperature").innerHTML = temperature;
+                    document.getElementById("moisture").innerHTML = moisture;
+                }
 
-                createDatabase.executeSql("INSERT INTO Patient (identification,temperature,moisture) VALUES(001, 38, 27)");
-                createDatabase.executeSql("INSERT INTO PressureMapping(patient,x,y,value) VALUES(001,1,1,1.2)");
-                createDatabase.executeSql("INSERT INTO PressureMapping(patient,x,y,value) VALUES(001,1,2,1.2)");
-            })
+                function querySuccess2(tx2, results2) {
+                    let x1 = results2.rows[0].x;
+                    let y1 = results2.rows[0].y;
+                    let p1 = results2.rows[0].value;
+                    var idx = ["x1","x2","x3","x4","x5","x6","x7","x8"];
+                    var idy = ["y1","y2","y3","y4","y5","y6","y7","y8"];
+                    var idp = ["p1","p2","p3","p4","p5","p6","p7","p8"];
+                    document.getElementById("x1").innerHTML = x1;
+                    document.getElementById("y1").innerHTML = y1;
 
-            db.transaction(queryDB);
-        </script>
 
+
+                    for (var i = 0; i < 8; i++) {
+                        let x = results2.rows[i].x;
+                        let y = results2.rows[i].y;
+                        let p = results2.rows[i].value;
+                        document.getElementById(idx[i]).innerHTML = x;
+                        document.getElementById(idy[i]).innerHTML = y;
+                        document.getElementById(idp[i]).innerHTML = p;
+                    }
+               }
+
+                var db = openDatabase("PhysiologicalSignalMonitor.db", "1.0", "Mybase", 4048);
+                db.transaction(function(createDatabase){
+                    createDatabase.executeSql("DROP TABLE IF EXISTS Patient");
+                    createDatabase.executeSql("DROP TABLE IF EXISTS PressureMapping");
+                    createDatabase.executeSql("DROP TABLE IF EXISTS PosteriorAuscultation");
+
+                    createDatabase.executeSql("CREATE TABLE Patient (identification TEXT PRIMARY KEY, temperature REAL, moisture REAL)");
+                    createDatabase.executeSql("CREATE TABLE PressureMapping (patient TEXT REFERENCES Patient,x INTEGER,y INTEGER,value REAL,PRIMARY KEY(patient,x,y))");
+                    createDatabase.executeSql("CREATE TABLE PosteriorAuscultation (patient TEXT REFERENCES Patient,audio BLOB,date TEXT)");
+
+                    createDatabase.executeSql("INSERT INTO Patient (identification,temperature,moisture) VALUES(001, 36.57, 30.5)");
+                    createDatabase.executeSql("INSERT INTO PressureMapping(patient,x,y,value) VALUES(001,1,1,1.1)");
+                    createDatabase.executeSql("INSERT INTO PressureMapping(patient,x,y,value) VALUES(001,1,2,1.2)");
+                    createDatabase.executeSql("INSERT INTO PressureMapping(patient,x,y,value) VALUES(001,2,1,1.3)");
+                    createDatabase.executeSql("INSERT INTO PressureMapping(patient,x,y,value) VALUES(001,2,2,1.2)");
+                    createDatabase.executeSql("INSERT INTO PressureMapping(patient,x,y,value) VALUES(001,3,1,1.3)");
+                    createDatabase.executeSql("INSERT INTO PressureMapping(patient,x,y,value) VALUES(001,3,2,1.2)");
+                    createDatabase.executeSql("INSERT INTO PressureMapping(patient,x,y,value) VALUES(001,4,1,1.1)");
+                    createDatabase.executeSql("INSERT INTO PressureMapping(patient,x,y,value) VALUES(001,4,2,1.2)");
+                })
+
+                db.transaction(queryDB);
+                db.transaction(queryDB2);
+
+                function readAudio() {
+                    document.getElementById("AuscultationReading").innerHTML += "<audio controls> <source src='121_1p1_Tc_sc_Meditron.wav' type='audio/wav'> </audio>";
+                    document.getElementById("Auscultation").innerHTML += "<img src='ausc_plot.png' style='max-width:60%;max-height:60%;'>";
+                    document.getElementById("read").remove();
+                }
+
+            </script>
+        </main>
     </body>
 </html>
 
